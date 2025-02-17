@@ -1,0 +1,16 @@
+[package]
+name = "cha-os"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+spin = "0.9.8"
+lazy_static = { version = "1.0", features = ["spin_no_std"] }
+bootloader="0.9"
+volatile = "0.2.6"
+fmt = "0.1.0"
+[profile.dev]
+panic="abort"
+[profile.release]
+panic="abort"
+
