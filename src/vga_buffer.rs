@@ -2,6 +2,8 @@ use core::fmt;
 use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
+use core::result::Result::Ok;
+use x86_64::instructions::interrupts;
 
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
@@ -43,8 +45,8 @@ impl ColorCode {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct ScreenChar {
     ascii_character: u8,
     color_code: ColorCode,
@@ -52,10 +54,12 @@ struct ScreenChar {
 
 const BUFFER_HEIGHT: usize = 25;
 const BUFFER_WIDTH: usize = 80;
+
 #[repr(transparent)]
 struct Buffer {
     chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
+
 pub struct Writer {
     column_position: usize,
     color_code: ColorCode,
@@ -80,6 +84,11 @@ impl Writer {
                     color_code,
                 });
                 self.column_position += 1;
+
+                // Ensure scrolling at the right edge
+                if self.column_position >= BUFFER_WIDTH {
+                    self.new_line();
+                }
             }
         }
     }
@@ -94,6 +103,7 @@ impl Writer {
             }
         }
     }
+
     fn new_line(&mut self) {
         for row in 1..BUFFER_HEIGHT {
             for col in 0..BUFFER_WIDTH {
@@ -104,6 +114,7 @@ impl Writer {
         self.clear_row(BUFFER_HEIGHT - 1);
         self.column_position = 0;
     }
+
     fn clear_row(&mut self, row: usize) {
         let blank = ScreenChar {
             ascii_character: b' ',
@@ -121,19 +132,25 @@ impl fmt::Write for Writer {
         Ok(())
     }
 }
+
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
 }
+
 #[macro_export]
 macro_rules! println {
-    () => ($crate::print!("\n"));
-    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+    ($($arg:tt)*) => ({
+        use core::fmt::Write;
+        let _ = writeln!(crate::vga_buffer::WRITER.lock(), $($arg)*);
+    });
 }
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
     use core::fmt::Write;
-    WRITER.lock().write_fmt(args).unwrap();
+    interrupts::without_interrupts(|| {
+        WRITER.lock().write_fmt(args).unwrap();
+    });
 }
 
