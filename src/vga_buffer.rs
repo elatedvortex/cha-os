@@ -38,7 +38,6 @@ pub enum Color {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
 struct ColorCode(u8);
-
 impl ColorCode {
     fn new(foreground: Color, background: Color) -> ColorCode {
         ColorCode((background as u8) << 4 | (foreground as u8))
@@ -74,18 +73,14 @@ impl Writer {
                 if self.column_position >= BUFFER_WIDTH {
                     self.new_line();
                 }
-
                 let row = BUFFER_HEIGHT - 1;
                 let col = self.column_position;
-
                 let color_code = self.color_code;
                 self.buffer.chars[row][col].write(ScreenChar {
                     ascii_character: byte,
                     color_code,
                 });
                 self.column_position += 1;
-
-                // Ensure scrolling at the right edge
                 if self.column_position >= BUFFER_WIDTH {
                     self.new_line();
                 }
@@ -96,9 +91,7 @@ impl Writer {
     fn write_string(&mut self, s: &str) {
         for byte in s.bytes() {
             match byte {
-                // printable ASCII byte or newline
                 0x20..=0x7e | b'\n' => self.write_byte(byte),
-                // not part of printable ASCII range
                 _ => self.write_byte(0xfe),
             }
         }

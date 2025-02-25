@@ -11,13 +11,12 @@ use cha_os::init;
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello test");
-
-    init();  // ✅ Now properly found
-
-    x86_64::instructions::interrupts::int3(); // Trigger breakpoint
-
+    unsafe{
+         *(0xdeadbeef as *mut u8) = 42;
+    };
+    init();
+    x86_64::instructions::interrupts::int3();
     println!("No crash!");
-
     loop {}
 }
 
