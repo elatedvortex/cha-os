@@ -1,6 +1,5 @@
-
+use crate::println;
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
-use crate::vga_buffer;
 use lazy_static::lazy_static;
 
 lazy_static! {
@@ -16,14 +15,15 @@ pub fn init_idt() {
     IDT.load();
 }
 
-use crate::println;
 
 extern "x86-interrupt" fn breakpoint_handler(stack_frame: InterruptStackFrame) {
     panic!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
 }
 extern "x86-interrupt" fn double_fault_handler(
     stack_frame: InterruptStackFrame,
-    _error_code: u64, // Required for double faults
+    _error_code: u64,
 ) -> ! {
+    println!("🔴 DOUBLE FAULT HANDLER REACHED! 🔴"); // Log this
     panic!("EXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
 }
+
