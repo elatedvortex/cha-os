@@ -12,11 +12,14 @@ use cha_os::init;
 pub extern "C" fn _start() -> ! {
    crate::interrupts::init_idt();
     println!("Hello test");
-    unsafe{
-         *(0xdeadbeef as *mut u8) = 42;
-    };
+    //unsafe{
+      //   *(0xdeadbeef as *mut u8) = 42;
+    //};
     init();
     x86_64::instructions::interrupts::int3();
+    fn stack_overflow(){
+        stack_overflow();   
+    }
     println!("No crash!");
     loop {}
 }
