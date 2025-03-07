@@ -16,18 +16,22 @@ pub extern "C" fn _start() -> ! {
       //   *(0xdeadbeef as *mut u8) = 42;
     //};
     init();
-    stack_overflow();
-    x86_64::instructions::interrupts::int3();
+    //stack_overflow();
+    //x86_64::instructions::interrupts::int3();
     fn stack_overflow(){
         stack_overflow();   
     }
     println!("No crash!");
-    loop {}
+    cha_os::hlt_loop();
+    //loop {
+    //use cha_os::print;
+    //print!("-");
+    //}
 }
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    cha_os::hlt_loop();
 }
 
