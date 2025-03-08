@@ -9,6 +9,8 @@ bootloader="0.9"
 volatile = "0.2.6"
 fmt = "0.1.0"
 x86_64 = "0.15.2"
+pic8259="0.10.1"
+pc-keyboard="0.7.0"
 [profile.dev]
 panic="abort"
 [profile.release]
