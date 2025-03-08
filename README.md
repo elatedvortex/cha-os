@@ -1,6 +1,8 @@
 # Cha-OS: A Minimal x86 Kernel
 
-Welcome to **Cha-OS**, a minimalistic yet powerful x86 operating system built from the ground up. This project serves as an exploration into low-level system programming, demonstrating how to build an OS kernel with **interrupt handling**, **memory management**, and **hardware communication**.
+Welcome to **Cha-OS**, a minimalistic yet powerful x86 operating system built from the ground up in **Rust**. Unlike traditional OS development in C, Rust offers **memory safety guarantees**, eliminating entire classes of bugs such as buffer overflows and null pointer dereferences. With Rust's strong type system and ownership model, Cha-OS ensures a more secure and efficient kernel without sacrificing performance.
+
+This project takes heavy inspiration from **Phil Opp's** fantastic series, [Writing an OS in Rust](https://os.phil-opp.com/), which provides a structured approach to kernel development in Rust.
 
 ## Features
 - **Custom Interrupt Descriptor Table (IDT)**
@@ -12,12 +14,18 @@ Welcome to **Cha-OS**, a minimalistic yet powerful x86 operating system built fr
 - **Global Descriptor Table (GDT) with Task State Segment (TSS)**
 - **Efficient CPU halting loop to reduce power consumption**
 
+## Why Rust Over C?
+- **Memory Safety** 🦀: Say goodbye to segmentation faults and buffer overflows!
+- **Zero-Cost Abstractions** ⚡: Get high-level safety with low-level performance.
+- **Concurrency Without Data Races** 🏎️: Rust’s ownership model prevents race conditions.
+- **Fearless Refactoring** 🔧: Make changes with confidence, thanks to Rust’s strict compiler checks.
+
 ## Project Structure
 ```md
 cha-os/
 ├── src/
-│   ├── main.rs        # Kernel entry point with panic handlers
-│   ├── lib.rs         # Kernel initialization & libraries or utilities
+│   ├── main.rs        # Kernel entry point and custom panic handlers
+│   ├── lib.rs         # Kernel initialization & utilities
 │   ├── vga_buffer.rs  # VGA text mode driver
 │   ├── interrupts.rs  # IDT & interrupt handlers
 │   ├── gdt.rs         # Global Descriptor Table setup
@@ -70,6 +78,6 @@ if let Some(key) = keyboard.process_keyevent(key_event) {
 Feel free to fork, experiment, and contribute! This project is for **learning** and **exploration**, so dive into the source code and start hacking.
 
 ---
-🚀 **Cha-OS** — Chaos in control. Built for the fearless.
+🚀 **Cha-OS** — Chaos in control. Built for the fearless, powered by Rust. 🦀
 
 
