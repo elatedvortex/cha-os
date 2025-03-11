@@ -11,8 +11,8 @@ pub static PICS: spin::Mutex<ChainedPics> =spin::Mutex::new(unsafe { ChainedPics
 
 //idt
 lazy_static! {
-    static ref IDT: InterruptDescriptorTable = {
-        let mut idt = InterruptDescriptorTable::new();
+    static ref IDT: InterruptDescriptorTable={
+        let mut idt=InterruptDescriptorTable::new();
         idt.breakpoint.set_handler_fn(breakpoint_handler);
         
         unsafe {
@@ -46,7 +46,7 @@ extern "x86-interrupt" fn double_fault_handler(
 #[derive(Debug, Clone, Copy)]
 #[repr(u8)]
 pub enum InterruptIndex {
-    Timer = PIC_1_OFFSET,
+    Timer=PIC_1_OFFSET,
     Keyboard,
 }
 impl InterruptIndex {
