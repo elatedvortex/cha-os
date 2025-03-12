@@ -2,6 +2,7 @@
 #![no_main]
 #![feature(custom_test_frameworks)]
 use cha_os::interrupts;
+use x86_64::structures::paging::mapper;
 use core::panic::PanicInfo;
 use cha_os::vga_buffer;
 use cha_os::println;
@@ -10,20 +11,21 @@ use bootloader::{BootInfo, entry_point};
 entry_point!(kernel_main);
 fn kernel_main(boot_info: &'static BootInfo)->!{
    crate::interrupts::init_idt();
-    use  cha_os::memory::active_level_4_table;
-    use cha_os::memory::translate_addr;
-    use x86_64::VirtAddr;
+    //use  cha_os::memory::active_level_4_table;
+    use x86_64::{structures::paging::Translate, VirtAddr};
+    use cha_os::memory;
     println!("Hello test{}","!");
     init();
 
     let phys_mem_offset=VirtAddr::new(boot_info.physical_memory_offset);
+    let mapper = unsafe { memory::init(phys_mem_offset) };
     let addresses=[
         0xb8000,0x20109,0x010202_001_1a,boot_info.physical_memory_offset,
     ];
     for &address in &addresses{
         let virt = VirtAddr::new(address);
-        let phys=unsafe{translate_addr(virt,phys_mem_offset)};
-        println!("{:?}->{:?}",virt,phys);
+        let phys=mapper.translate_addr(virt);
+        println!("{:?}->{:?}    ",virt,phys);
     }
 
     
