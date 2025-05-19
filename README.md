@@ -25,6 +25,7 @@ This project takes heavy inspiration from **Phil Opp's** fantastic series, [Writ
 cha-os/
 ├── src/
 │   ├── main.rs        # Kernel entry point and custom panic handlers
+│   ├── memory.rs      # Kernel memory management
 │   ├── lib.rs         # Kernel initialization & utilities
 │   ├── vga_buffer.rs  # VGA text mode driver
 │   ├── interrupts.rs  # IDT & interrupt handlers
