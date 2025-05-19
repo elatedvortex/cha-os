@@ -33,7 +33,7 @@ cha-os/
 └── bootimage/         # Bootable kernel image
 ```
 
-## Installation & Running
+## Installation && Running
 ### Prerequisites
 - **Rust nightly toolchain** with `rust-src` component
 - `cargo-xbuild` for cross-compilation
