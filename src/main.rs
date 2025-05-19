@@ -2,33 +2,39 @@
 #![no_main]
 #![feature(custom_test_frameworks)]
 use cha_os::interrupts;
-use x86_64::structures::paging::mapper;
+use cha_os::memory::BootInfoFrameAllocator;
 use core::panic::PanicInfo;
 use cha_os::vga_buffer;
 use cha_os::println;
-use cha_os::init;
 use bootloader::{BootInfo, entry_point};
 entry_point!(kernel_main);
 fn kernel_main(boot_info: &'static BootInfo)->!{
    crate::interrupts::init_idt();
     //use  cha_os::memory::active_level_4_table;
-    use x86_64::{structures::paging::Translate, VirtAddr};
     use cha_os::memory;
+    use cha_os::gdt::init;
+    use x86_64::{structures::paging::Page,VirtAddr};
     println!("Hello test{}","!");
     init();
 
     let phys_mem_offset=VirtAddr::new(boot_info.physical_memory_offset);
-    let mapper = unsafe { memory::init(phys_mem_offset) };
-    let addresses=[
-        0xb8000,0x20109,0x010202_001_1a,boot_info.physical_memory_offset,
-    ];
-    for &address in &addresses{
-        let virt = VirtAddr::new(address);
-        let phys=mapper.translate_addr(virt);
-        println!("{:?}->{:?}    ",virt,phys);
-    }
+    let mut  mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut frame_allocator =unsafe {
+        BootInfoFrameAllocator::init(&boot_info.memory_map)
+    };
+    //any address can be contained in the page 
+    let page=Page::containing_address(VirtAddr::new(0xdeadbeaf000));
+    memory::create_example_mapping(page,&mut mapper,&mut frame_allocator);
 
-    
+    let page_ptr:*mut u64=page.start_address().as_mut_ptr();
+    unsafe { page_ptr.offset(400).write_volatile(0x_f021_f077_f065_f04e)};
+
+
+
+
+
+
+
 
     /*
     let l4_table=unsafe {
