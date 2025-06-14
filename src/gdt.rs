@@ -14,7 +14,7 @@ lazy_static! {
 
             unsafe {
                 let stack_start=VirtAddr::from_ptr(STACK.as_ptr());
-                let stack_end=stack_start + STACK_SIZE as u64;
+                let stack_end=stack_start+STACK_SIZE as u64;
                 stack_end
             }
         };
@@ -38,5 +38,5 @@ lazy_static! {
 
 pub fn init() {
     GDT.0.load();
-    unsafe { load_tss(GDT.1.tss_selector); }
+    unsafe{load_tss(GDT.1.tss_selector); }
 }

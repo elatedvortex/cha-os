@@ -14,7 +14,7 @@ pub struct BootInfoFrameAllocator
 
 impl BootInfoFrameAllocator
 {
-    fn usable_frames(&self)->impl Iterator<Item = PhysAddr>
+    fn usable_frames(&self)->impl Iterator<Item=PhysAddr>
     {
         let regions=self.memory_map.iter();
         let usable_regions=regions.filter(|r| r.region_type==MemoryRegionType::Usable);
@@ -25,7 +25,7 @@ impl BootInfoFrameAllocator
         frame_addresses.map(|addr| (PhysAddr::new(addr)))
     }
     pub unsafe fn init(memory_map:&'static MemoryMap)->Self{
-        BootInfoFrameAllocator { memory_map, next: 0 }
+        BootInfoFrameAllocator{memory_map, next: 0 }
     }
 }
 
@@ -33,7 +33,7 @@ unsafe impl FrameAllocator<Size4KiB> for BootInfoFrameAllocator
 {
     fn allocate_frame(&mut self) -> Option<PhysFrame<Size4KiB>> 
     {
-        let frame=self.usable_frames().nth(self.next) .map(|addr| PhysFrame::containing_address(addr));;
+        let frame=self.usable_frames().nth(self.next) .map(|addr| PhysFrame::containing_address(addr));
         self.next+=1;
         frame
     }
