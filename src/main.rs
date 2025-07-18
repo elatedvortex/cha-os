@@ -4,9 +4,10 @@
 #![feature(alloc_error_handler)]
 
 extern crate alloc;
-
+use cha_os::vga_buffer;
 use core::panic::PanicInfo;
 use alloc::vec::Vec;
+use alloc::vec;
 use alloc::rc::Rc;
 use alloc::boxed::Box;
 use bootloader::{BootInfo, entry_point};
