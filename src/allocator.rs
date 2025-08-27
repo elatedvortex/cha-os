@@ -4,7 +4,7 @@ use core::ptr::null_mut;
 
 #[global_allocator]
 static ALLOCATOR: LockedHeap=LockedHeap::empty();
-
+pub mod bump;
 pub const HEAP_START: usize=0x_4444_4444_0000;
 pub const HEAP_SIZE: usize=100 * 1024;
 
@@ -34,11 +34,24 @@ pub fn init_heap(
             mapper.map_to(page, frame, flags, frame_allocator)?.flush();
         }
     }
-
-    // ✅ Initialize the linked list allocator
     unsafe {
         ALLOCATOR.lock().init(HEAP_START, HEAP_SIZE);
     }
 
     Ok(())
 }
+pub struct Locked<A>{
+    inner:spin::Mutex<A>,
+}
+
+impl<A> Locked<A>{
+    pub const fn new(inner:A)-> Self{
+        Locked{
+            inner:spin::Mutex::new(inner),
+        }
+    }
+    pub fn lock(&self)->spin::MutexGuard<A>{
+        self.inner.lock()
+    }
+}
+
