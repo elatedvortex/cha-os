@@ -12,6 +12,7 @@ fmt = "0.1.0"
 x86_64 = "0.15.2"
 pic8259="0.10.1"
 pc-keyboard="0.7.0"
+uart_16550 = "0.4.0"
 
 [profile.dev]
 panic="abort"
