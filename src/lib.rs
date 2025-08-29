@@ -7,6 +7,7 @@ pub mod memory;
 pub mod vga_buffer;
 pub mod interrupts;
 pub mod gdt;
+mod serial;
 pub fn init() {
     gdt::init();
     interrupts::init_idt();

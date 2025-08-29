@@ -33,7 +33,7 @@ unsafe impl GlobalAlloc for Locked< BumpAllocator>{
             Some(end)=>end,
             None => return ptr::null_mut(),
         };
-        if alloc_end>bump.head_end{
+        if alloc_end>bump.heap_end{
             ptr::null_mut()
         }
         else{
@@ -45,7 +45,7 @@ unsafe impl GlobalAlloc for Locked< BumpAllocator>{
     unsafe fn dealloc(&self,_ptr: *mut u8,_layout:Layout){
         let mut bump =self.lock();
         bump.allocations -=1;
-        bump.allocations ==0{
+        if bump.allocations ==0 {
             bump.next=bump.heap_start;
         }
         
