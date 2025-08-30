@@ -13,6 +13,7 @@ This project takes heavy inspiration from **Phil Opp's** fantastic series, [Writ
 - **Custom VGA text-mode output**
 - **Global Descriptor Table (GDT) with Task State Segment (TSS)**
 - **Efficient CPU halting loop to reduce power consumption**
+- **Dynamic Heap Allocation with a custom allocator** 🗂️
 
 ## Why Rust Over C?
 - **Memory Safety** 🦀: Say goodbye to segmentation faults and buffer overflows!
@@ -21,19 +22,18 @@ This project takes heavy inspiration from **Phil Opp's** fantastic series, [Writ
 - **Fearless Refactoring** 🔧: Make changes with confidence, thanks to Rust’s strict compiler checks.
 
 ## Project Structure
-```md
+```text
 cha-os/
 ├── src/
 │   ├── main.rs        # Kernel entry point and custom panic handlers
-│   ├── memory.rs      # Kernel memory management
+│   ├── memory.rs      # Kernel memory management & paging setup
+│   ├── allocator.rs   # Dynamic heap allocation
 │   ├── lib.rs         # Kernel initialization & utilities
 │   ├── vga_buffer.rs  # VGA text mode driver
 │   ├── interrupts.rs  # IDT & interrupt handlers
 │   ├── gdt.rs         # Global Descriptor Table setup
 ├── Cargo.toml         # Rust project manifest
 └── bootimage/         # Bootable kernel image
-```
-
 ## Installation && Running
 ### Prerequisites
 - **Rust nightly toolchain** with `rust-src` component
@@ -50,6 +50,8 @@ cargo build --release
 cargo run
 ```
 
+---
+
 ## Interrupts & Exception Handling
 Cha-OS features a structured approach to handling **hardware and software interrupts**:
 
@@ -57,6 +59,8 @@ Cha-OS features a structured approach to handling **hardware and software interr
 - **Double Fault Handling:** Uses a separate stack via TSS
 - **PIC Initialization:** Configured with `pic8259` crate
 - **Keyboard Input:** Reads scan codes via I/O ports
+
+---
 
 ## Example Keyboard Input
 Pressing keys will display the corresponding character on-screen. The kernel processes **scan codes** using `pc-keyboard`:
@@ -69,16 +73,42 @@ if let Some(key) = keyboard.process_keyevent(key_event) {
 }
 ```
 
+---
+
+## Example Heap Allocation
+Cha-OS now supports **dynamic heap allocation** using Rust’s standard abstractions:
+```rust
+// Allocate on the heap
+let heap_value = Box::new(42);
+println!("Heap value: {}", heap_value);
+
+// Growable vector
+let mut vec = Vec::new();
+for i in 0..5 {
+    vec.push(i);
+}
+println!("Vector contents: {:?}", vec);
+
+// Reference-counted smart pointer
+use alloc::rc::Rc;
+let rc_example = Rc::new("Cha-OS in Rust");
+println!("Reference Count: {}", Rc::strong_count(&rc_example));
+```
+
+---
+
 ## Next Steps
-- Implement memory management (paging)
-- Add syscall support
-- Develop a basic userspace
-- Introduce process scheduling
+- Implement **paging-based memory management**
+- Add **system call support**
+- Introduce **process scheduling** (beyond cooperative tasks)
+- Develop a **basic userspace** with program loading
+- Explore **filesystem support** (FAT32 or ext2)
+
+---
 
 ## Contributing
 Feel free to fork, experiment, and contribute! This project is for **learning** and **exploration**, so dive into the source code and start hacking.
 
 ---
+
 🚀 **Cha-OS** — Chaos in control. Built for the fearless, powered by Rust. 🦀
-
-
