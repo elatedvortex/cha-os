@@ -68,3 +68,10 @@ impl<A> Locked<A>{
 fn align_up(addr: usize, align: usize) -> usize {
     (addr + align - 1) & !(align - 1)
 }
+//linked list allocation
+pub mod linked_list;
+struct ListNode{
+    size:usize,
+    next:Option<&'static mut ListNode>,
+}
+

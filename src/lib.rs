@@ -1,7 +1,7 @@
 //
 #![no_std]
 #![feature(abi_x86_interrupt)]
-extern crate alloc;
+extern crate alloc;             
 pub mod allocator;
 pub mod memory;
 pub mod vga_buffer;
